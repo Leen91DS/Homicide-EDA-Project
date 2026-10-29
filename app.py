@@ -15,7 +15,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-DATA_PATH = Path(__file__).resolve().parent / "database.csv"
+APP_DIR = Path(__file__).resolve().parent
+# Use the full CSV if present, otherwise the compressed copy stored in the repo.
+DATA_PATH = next((p for p in (APP_DIR / "database.csv", APP_DIR / "database.csv.gz") if p.exists()), APP_DIR / "database.csv.gz")
 
 # Consistent styling
 st.markdown(
@@ -101,9 +103,9 @@ st.title("Homicide Data Explorer")
 st.caption("Explore homicide records from 1980–2014. Counts represent records in this dataset, not necessarily unique incidents or population-adjusted crime rates.")
 
 if not DATA_PATH.exists():
-    st.error("I couldn't find `database.csv` next to `app.py`.")
+    st.error("I couldn't find `database.csv` or `database.csv.gz` next to `app.py`.")
     st.markdown(
-        "Place **app.py** and **database.csv** in the same folder, then run `streamlit run app.py`."
+        "Place **app.py** and **database.csv.gz** (or database.csv) in the same folder, then run `streamlit run app.py`."
     )
     st.stop()
 
